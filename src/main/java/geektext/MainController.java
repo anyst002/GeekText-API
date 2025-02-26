@@ -1,16 +1,9 @@
 package geektext;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.PutMapping;
-//import org.springframework.web.bind.annotation.PatchMapping;
-//import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-//import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -29,7 +22,9 @@ public class MainController {
 	
 	@GetMapping(path="/{id}")
 	@ResponseBody // This returns a JSON or XML of a single user by id
-	public Optional<User> getUser(@PathVariable Integer id) {
-		return userRepository.findById(id);
+	public User getUser(@PathVariable Integer id) {
+	    return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id)); 
+	    // i do this instead of using java optional so that some msg is returned on usernotfound exception 
+	    // also this gives a 404 im not sure if java optional gave a 404
 	}
 }
