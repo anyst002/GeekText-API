@@ -1,4 +1,4 @@
-//package com.example.bookdiscount.model;
+package geektext;
 
 public class Book {
     private int id;
