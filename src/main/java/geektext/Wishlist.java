@@ -19,6 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
+@Table(name="wishlist")
 public class Wishlist {
 	@Id
 	@GeneratedValue
@@ -37,12 +38,11 @@ public class Wishlist {
 	};
 	public Wishlist() {
 	}
-	/*
-	 * todo
+	
+	
 	@Transient
 	@ElementCollection
-	public Set<BookEntity> books = null; 
-*/
+	public Set<BookEntity> books;
 	public Integer getUserId() {
 		return user.getId();
 	}
