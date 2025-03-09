@@ -72,8 +72,8 @@ public class UserController {
 	
 	//Gets a user via username; returns the user info as JSON
 	@ResponseBody
-	@GetMapping(path="/user/{username}")
-	public ResponseEntity<?> getUser(@PathVariable String username) {
+	@GetMapping(path="/user")
+	public ResponseEntity<?> getUser(@RequestParam("username") String username) {
 		//Get the user
 		int id = findUserId(username);
 		User u = userRepository.findById(id).get();
