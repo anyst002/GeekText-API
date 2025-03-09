@@ -1,13 +1,24 @@
 package geektext;
-import org.springframework.data.repository.CrudRepository;
 
-// This will be AUTO IMPLEMENTED by Spring into a Bean called userRepository
-// CRUD refers Create, Read, Update, Delete
+import java.util.Set;
 
-public interface WishlistRepository extends CrudRepository<Wishlist, Integer> {
-//	public static final String FIND_USERNAMES = "SELECT id, username FROM user";
-//
-//	@Query(value = FIND_USERNAMES, nativeQuery = true)
-//	public List<Object[]> findUsernames();
-//  queries a subset but doesn't format it properly, probably shouldn't use this
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+// i just remember changing something to jpa repository n it worked again
+interface WishlistRepository extends JpaRepository<Wishlist, Integer> {
+
+	
+	/* todo
+	 * 	// this is the query i tested and it worked in mysql workbench
+	// SELECT * FROM geektext.book WHERE isbn IN(SELECT book_id FROM geektext.lists WHERE wishlist_id = [insert a wishlist id]);
+	@Query(nativeQuery=true, value="SELECT * FROM book WHERE isbn IN(SELECT book_id FROM lists WHERE wishlist_id = :wId)")
+
+	public Set<BookEntity> getBooksByWishlistId(@Param("wId") Integer wishlistId);
+	
+	@Query(nativeQuery = true, value = "SELECT wishlist_name FROM wishlist WHERE id = :wId")
+	public Set<Wishlist> getWishlistsById(@Param("wId") Integer wishlistId);
+	*/
+
 }
