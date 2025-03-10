@@ -2,7 +2,6 @@ package geektext;
 
 // import libraries
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,7 +47,6 @@ public class BookController {
         // Log the genre that is being passed in the request, for testing, can remove for final
         System.out.println("Received genre parameter: " + genre);
 
-     
         List<Book> books = bookServicer.getBooksByGenre(genre);
         
         // To check if no books are in genre
@@ -62,5 +60,11 @@ public class BookController {
         System.out.println("Books found: " + books); // Can remove later, used for testing
         return ResponseEntity.ok(books); // Return 200 OK & the list of books
     }
+ 
+//GetMapping to retrieve the top 10 best-selling books
+ @GetMapping("/topSellers")
+ public List<Book> getTopSellers() {
+     return bookServicer.getTop10BestSellers();
+ }
 
 }
