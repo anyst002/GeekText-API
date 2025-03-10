@@ -31,4 +31,17 @@ public class BookServicer {
             bookRepository.save(book);
         }
     }
+    
+    // Retrieve top 10 best-selling books
+    public List<Book> getTop10BestSellers() {
+        return bookRepository.findTop10Books();
+    }
+
 }
+
+
+
+
+
+
+
