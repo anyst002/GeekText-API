@@ -2,7 +2,9 @@ package geektext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,41 +16,59 @@ public class ShoppingCartService {
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    // Add Item to Cart
+    public void addItemToCart(Integer userId, Long isbn, int quantity) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId);
 
-    // Calculate the subtotal of all books in the shopping cart
-    public double calculateSubtotal(Integer userId) {
-        ShoppingCart cart = shoppingCartRepository.findByUserId(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Shopping cart not found for user"));
-
-        return cart.getBooks().stream()
-                .mapToDouble(Book::getPrice)
-                .sum();
-    }
-
-    // Add a book to the user's shopping cart
-    public void addBookToCart(Integer userId, long isbn) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        Book book = bookRepository.findById(isbn)
-                .orElseThrow(() -> new IllegalArgumentException("Book not found"));
-
-        // Retrieve or create the user's shopping cart
-        ShoppingCart cart = shoppingCartRepository.findByUserId(userId)
-                .orElseGet(() -> {
-                    ShoppingCart newCart = new ShoppingCart();
-                    newCart.setUser(user);
-                    newCart.setBooks(new ArrayList<>()); // Ensure books list is initialized
-                    return shoppingCartRepository.save(newCart);
-                });
-
-        // Ensure books list is not null before adding
-        if (cart.getBooks() == null) {
-            cart.setBooks(new ArrayList<>());
+        if (shoppingCart == null) {
+            shoppingCart = new ShoppingCart(userId);
+            shoppingCartRepository.save(shoppingCart);
         }
 
-        cart.getBooks().add(book);
-        shoppingCartRepository.save(cart);
+        if (shoppingCart.getItems() == null) {
+            shoppingCart.setItems(new ArrayList<>()); // Fix for NullPointerException
+        }
+
+        Book book = bookRepository.findById(isbn)
+                .orElseThrow(() -> new RuntimeException("Book not found with ISBN: " + isbn));
+
+        CartItem cartItem = new CartItem(book, quantity);
+        cartItem.setShoppingCart(shoppingCart);
+
+        shoppingCart.getItems().add(cartItem);
+        shoppingCartRepository.save(shoppingCart);
     }
+
+    // View Cart Items
+    public List<CartItem> getCartItems(Integer userId) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId);
+        if (shoppingCart == null || shoppingCart.getItems() == null) {
+            return new ArrayList<>();
+        }
+        return shoppingCart.getItems();
+    }
+
+    // Remove Item from Cart
+    public void removeItemFromCart(Integer userId, Long isbn) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId);
+
+        if (shoppingCart != null && shoppingCart.getItems() != null) {
+            shoppingCart.getItems().removeIf(cartItem -> cartItem.getBook().getIsbn() == isbn);
+            shoppingCartRepository.save(shoppingCart);
+        }
+    }
+
+    // Calculate Subtotal
+    public double calculateSubtotal(Integer userId) {
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userId);
+        if (shoppingCart == null || shoppingCart.getItems() == null) {
+            return 0.0;
+        }
+
+        double subtotal = 0.0;
+        for (CartItem cartItem : shoppingCart.getItems()) {
+            subtotal += cartItem.getQuantity() * cartItem.getBook().getPrice();
+        }
+        return subtotal;
+    }
+}
