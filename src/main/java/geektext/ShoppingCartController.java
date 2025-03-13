@@ -1,9 +1,9 @@
 package geektext;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -12,33 +12,52 @@ public class ShoppingCartController {
 
     @Autowired
     private ShoppingCartService shoppingCartService;
-  
-    @Autowired 
-    private ShoppingCartRepository shoppingCartRepository;
 
-    // Retrieve the subtotal of a user's shopping cart
-    @GetMapping("/{userId}/subtotal")
-    public double getSubtotal(@PathVariable Integer userId) {
-        return shoppingCartService.calculateSubtotal(userId);
-    }
-
-    // Add a book to the user's shopping cart
+    // Add Item to Cart
     @PostMapping("/add")
-    public void addBookToCart(@RequestParam Integer userId, @RequestParam Long isbn) {
-        shoppingCartService.addBookToCart(userId, isbn);
+    public ResponseEntity<String> addItemToCart(@RequestParam Integer userId, @RequestParam Long isbn, @RequestParam int quantity) {
+        try {
+            shoppingCartService.addItemToCart(userId, isbn, quantity);
+            return ResponseEntity.ok("Item added to cart");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
     }
 
-    // View all the books in the user's shopping cart
-    @GetMapping("/{userId}")
-    public List<Book> getBooksInCart(@PathVariable Integer userId) {
-        return shoppingCartRepository.findByUserId(userId)
-                .map(ShoppingCart::getBooks)
-                .orElse(Collections.emptyList()); // Return an empty list if the cart does not exist
+    // View Cart
+    @GetMapping("/view")
+    public ResponseEntity<List<CartItem>> viewCart(@RequestParam Integer userId) {
+        try {
+            List<CartItem> cartItems = shoppingCartService.getCartItems(userId);
+            return ResponseEntity.ok(cartItems);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
-    // Remove a book from the user's shopping cart
+    // Remove Item from Cart
     @DeleteMapping("/remove")
-    public void removeBookFromCart(@RequestParam Integer userId, @RequestParam Long isbn) {
-        shoppingCartService.removeBookFromCart(userId, isbn);
+    public ResponseEntity<String> removeItemFromCart(@RequestParam Integer userId, @RequestParam Long isbn) {
+        try {
+            shoppingCartService.removeItemFromCart(userId, isbn);
+            return ResponseEntity.ok("Item removed from cart");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+    // Get Subtotal
+    @GetMapping("/subtotal")
+    public ResponseEntity<Double> getSubtotal(@RequestParam Integer userId) {
+        try {
+            double subtotal = shoppingCartService.calculateSubtotal(userId);
+            return ResponseEntity.ok(subtotal);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
+        }
     }
 }
