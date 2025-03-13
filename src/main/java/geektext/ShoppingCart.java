@@ -1,50 +1,48 @@
 package geektext;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
-@Table(name = "shopping_cart")
 public class ShoppingCart {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue
+    private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference // This allows the items to be serialized without creating a loop
+    private List<CartItem> items;
 
-    @ManyToMany
-    @JoinTable(
-        name = "cart_books",
-        joinColumns = @JoinColumn(name = "cart_id"),
-        inverseJoinColumns = @JoinColumn(name = "isbn")
-    )
-    private List<Book> books;
+    @Column(name = "user_id")
+    private Integer userId;
 
-    // Getters and setters
-    public Integer getId() {
+    public ShoppingCart() {}
+
+    public ShoppingCart(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public List<CartItem> getItems() {
+        return items;
     }
 
-    public User getUser() {
-        return user;
+    public void setItems(List<CartItem> items) {
+        this.items = items;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }
 
