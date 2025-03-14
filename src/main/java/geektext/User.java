@@ -85,4 +85,12 @@ public class User {
 	public Set<Wishlist> getWishlists() {
 		return wishlists;
 	}
+	
+	private
+	@OneToMany(mappedBy = "id.user", fetch = FetchType.LAZY)
+		Set<Lists> L;
+	@JsonIgnore
+	public Set<Lists> getLists() {
+		return L;
+	}
 }
