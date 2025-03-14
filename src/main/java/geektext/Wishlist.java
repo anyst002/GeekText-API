@@ -1,8 +1,11 @@
 package geektext;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.Query;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -20,17 +23,24 @@ import jakarta.persistence.Transient;
 
 @Entity
 @Table(name="wishlist")
-public class Wishlist {
+public class Wishlist implements Serializable{
 	@Id
 	@GeneratedValue
 	private Integer id;
 	
 	// this is how to deal with foreign keys.    
-	private @ManyToOne
-	@JoinColumn(name = "user_id") 
-		User user;
+	private 
+		@ManyToOne
+		@JoinColumn(name = "user_id") 
+			User user;
 	
-	//private @OneToMany() BookEntity book;
+	private 
+		@OneToMany(mappedBy = "id.wishlist", fetch = FetchType.LAZY)
+			Set<Lists> L;
+	@JsonIgnore
+	public Set<Lists> getLists() {
+		return L;
+	}
 	private String wishlistName;
 	public Wishlist(String name, User u) {
 		user = u;
@@ -38,11 +48,9 @@ public class Wishlist {
 	};
 	public Wishlist() {
 	}
-	
-	
 	@Transient
 	@ElementCollection
-	public Set<BookEntity> books;
+	public Set<Book> books;
 	public Integer getUserId() {
 		return user.getId();
 	}
