@@ -1,5 +1,7 @@
 package geektext;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
@@ -7,5 +9,5 @@ import org.springframework.data.repository.CrudRepository;
 // CRUD refers Create, Read, Update, Delete
 
 public interface ListsRepository extends JpaRepository<Lists, ListsId> {
-
+	
 }

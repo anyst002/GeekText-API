@@ -1,18 +1,10 @@
 package geektext;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
@@ -40,6 +32,34 @@ class ListsId {
 	public Wishlist getWishlist() {
 		return wishlist;
 	}
+	public ListsId() {
+		
+	}
+	public ListsId(Wishlist w, Book b, User u) {
+		wishlist = w;
+		book = b;
+		user = u;
+	}
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) {
+			return true;
+		}
+		if(!(o instanceof ListsId)) {
+			return false;
+		}
+		ListsId i = (ListsId) o;
+		if(!i.getBook().equals(this.getBook())) {
+			return false;
+		}
+		if(!i.getUser().equals(this.getUser())) {
+			return false;
+		}
+		if(!i.getWishlist().equals(this.getWishlist())) {
+			return false;
+		}
+		return true;
+	}
 }
 
 @Entity
@@ -63,8 +83,28 @@ public class Lists {
     }    
 
 	public Lists() {
-		
 	}
-
+	public Lists(ListsId id) {
+		this.id = id;
+	}
+	
+	@Override
+	public String toString() {
+		return "List{" + getUser() + ", " + getBook() + ", " + getWishlist() + "}";
+	}
+	public boolean equals(Object o) {
+		if(o == this) {
+			return true;
+		}
+		if(!(o instanceof Lists)) {
+			return false;
+		}
+		Lists L = (Lists)o;
+		ListsId oId = new ListsId(L.getWishlist(), L.getBook(), L.getUser());
+		if(!oId.equals(id)) {
+			return false;
+		}
+		return true;
+	}
 
 }
