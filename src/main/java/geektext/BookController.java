@@ -3,6 +3,7 @@ package geektext;
 // import libraries
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,8 @@ public class BookController {
 
     @Autowired
     private BookServicer bookServicer;
+    @Autowired
+    private BookModelAssembler assembler;
 
 //Patch mapping for discount based on publisher    
     @PatchMapping("/discount")
@@ -60,6 +63,10 @@ public class BookController {
         System.out.println("Books found: " + books); // Can remove later, used for testing
         return ResponseEntity.ok(books); // Return 200 OK & the list of books
     }
+ 
+	public EntityModel<Book> getBookModelByIsbn(Long isbn) {
+		return assembler.toModel(bookServicer.getBookRepository().findById(isbn).orElseThrow( () -> new BookNotFoundException(isbn)));
+ 	}
  
 //GetMapping to retrieve the top 10 best-selling books
  @GetMapping("/topSellers")
