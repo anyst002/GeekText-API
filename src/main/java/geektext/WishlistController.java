@@ -12,6 +12,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 //import org.springframework.web.bind.annotation.GetMapping;
@@ -35,22 +36,36 @@ public class WishlistController {
 	private final WishlistRepository wishlistRepository;
 
 	private final WishlistModelAssembler assembler;
-;
+	private final ListsService listsService;
+	
     @PersistenceContext // import for entity manager
     private EntityManager entityManager; // need entityManager to get userRepository so i can get a user by userId
 
-    WishlistController(WishlistRepository wRepository, WishlistModelAssembler assembler) {
+    WishlistController(WishlistRepository wRepository, WishlistModelAssembler assembler, ListsService l) {
         this.wishlistRepository = wRepository;
         this.assembler = assembler;
+        this.listsService = l;
     }
-	@PostMapping
+    private void initializeBooks(Wishlist w) {
+    	if(w.books != null) {
+    		return;
+    	}
+    	Set<Book> books = listsService.getBooksByWishlistId(w.getId());
+    	w.books = books;
+    }
+    
+   	@PostMapping
 	@ResponseBody
 	ResponseEntity<?> createWishlist(@RequestParam("wishlistName") String wishlistName, @RequestParam("userId") Integer userId) {
 		int max_wishlist_num = 3; // can only have 3 wishlists at most
 		RepositoryFactorySupport factory = new JpaRepositoryFactory(entityManager); // jpa repository factory needs entity manager passed in.
-		UserRepository repository = factory.getRepository(UserRepository.class); // then can get user repository class from jpaRepositoryFactory.
-		User u = repository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)); // gets user or throws error.
+		UserRepository uRepository = factory.getRepository(UserRepository.class); // then can get user repository class from jpaRepositoryFactory.
+		User u = uRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId)); // gets user or throws error.
 		Set<Wishlist> wishlists = u.getWishlists();
+		// initialization function that initializes set<books> if it hasnt been initialized yet.
+		for(Wishlist w: wishlists) {
+	 		initializeBooks(w);
+		}
 		// duplicate name checker.
 		for(Wishlist w : wishlists) {
 			System.out.println("WISHLIST NAME: " + w.getWishlistName());
@@ -73,30 +88,50 @@ public class WishlistController {
 		  // this return gives the links n stuff
 		//return wishlistRepository.save(w); // nonrest way that does not return the links and stuff
 	}
-	/*
-	@PostMapping
+	@PostMapping("/{wishlistId}")
 	@ResponseBody
-	*/
-	/*
-	ResponseEntity<?> addBookToWishlist(@RequestParam("bookId") Long bookId, @RequestParam("wishlistId") Integer wishlistId) {
+	Set<EntityModel<Book>> addBookToWishlist(@PathVariable Integer wishlistId, @RequestParam("bookId") Long bookId) {
 		Wishlist w = wishlistRepository.findById(wishlistId).orElseThrow(() -> new WishlistNotFoundException(wishlistId));
+		listsService.checkBookExists(bookId);
+		initializeBooks(w); // i need to call this function in all of the mappings.
+		Set<Long> isbns = listsService.getBookIsbnByWishlistId(wishlistId);
+		if(isbns.contains(bookId)) {
+			throw new DuplicateBookInWishlistException(bookId, wishlistId, w.getWishlistName());
+		}
+		listsService.addBookToWishlist(w, bookId);
+		Set<EntityModel<Book>> m = listsService.getBookModelsByWishlistId(wishlistId);
+		// if code reaches here no exceptions are thrown.
+
+		return m;
 	}
-	*/
-	
-	// this get is for wishlist debugging purposes
-	@GetMapping("/{id}")
-	EntityModel<Wishlist> one(@PathVariable Integer id) {
+	@GetMapping("/{wishlistId}")
+	@ResponseBody
+	Set<EntityModel<Book>> getBooksFromWishlist(@PathVariable Integer wishlistId) {
+		Wishlist w = wishlistRepository.findById(wishlistId).orElseThrow(() -> new WishlistNotFoundException(wishlistId));
+		initializeBooks(w);
+		return listsService.getBookModelsByWishlistId(wishlistId);
+	}
+	@DeleteMapping("/{wishlistId}")
+	@ResponseBody
+	ResponseEntity<?> removeBookFromWishlist(@PathVariable Integer wishlistId, @RequestParam("bookId") Long bookId) {
+		Wishlist w = wishlistRepository.findById(wishlistId).orElseThrow(() -> new WishlistNotFoundException(wishlistId));
+		initializeBooks(w);
+		listsService.checkBookInWishlist(w, bookId); // also checks if the book exists in general.
+		listsService.deleteEntry(w, bookId);
+		return ResponseEntity.noContent().build();
+	}
+	EntityModel<Wishlist> one(Integer id) {
 
 		Wishlist w = wishlistRepository.findById(id) //
 				.orElseThrow(() -> new WishlistNotFoundException(id)); 
+		initializeBooks(w);
 
 		System.out.println(w); // just a debug print
 		EntityModel<Wishlist> eModel = assembler.toModel(w); // the model i'm returning.
 		System.out.println(eModel); // just a debug print.
 		return eModel;
 	}
-	// this get is for wishlist debugging purposes.
-	@GetMapping("/all")
+	// this get is for entity model.
 	CollectionModel<EntityModel<Wishlist>> all() {
 
 		  List<EntityModel<Wishlist>> wishlists = wishlistRepository.findAll().stream()
@@ -104,6 +139,9 @@ public class WishlistController {
 		          linkTo(methodOn(WishlistController.class).one(wishlist.getId())).withSelfRel(),
 		          linkTo(methodOn(WishlistController.class).all()).withRel("wishlist")))
 		      .collect(Collectors.toList());
+		  for(EntityModel<Wishlist> w : wishlists) {
+			  initializeBooks(w.getContent());
+		  }
 		  System.out.println(wishlists);
 		  return CollectionModel.of(wishlists, linkTo(methodOn(WishlistController.class).all()).withSelfRel());
 	}
