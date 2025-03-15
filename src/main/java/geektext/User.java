@@ -55,6 +55,10 @@ public class User {
 		return homeAddress;
 	}
 	
+	public String toString() {
+		return "User{id=" + id + ", username=" + username + ", password=" + userPassword + 
+				", fullName= " + fullName + ", emailAddress= " + emailAddress + ", homeAddress=" + homeAddress + "}";
+	}
 	//======================
 	//=== Setter methods ===
 	//======================
@@ -92,5 +96,22 @@ public class User {
 	@JsonIgnore
 	public Set<Lists> getLists() {
 		return L;
+	}
+	@Override
+	public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof User)) {
+            return false;
+        }
+        User u = (User) o;
+        if(u.getId() != this.getId()) {
+        	return false;
+        }
+        // id is a unique key.
+        return true;
+        
 	}
 }
