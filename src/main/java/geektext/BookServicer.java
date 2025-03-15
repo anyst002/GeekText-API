@@ -2,6 +2,8 @@ package geektext;
 
 //import libraries
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -14,9 +16,17 @@ public class BookServicer {
     @Autowired
     private BookRepository bookRepository; // Create bookRepository
     
- // Retrieve books by genre
+    // added this function to work with my listsservice file
+    public Book getBookByIsbn(Long isbn) {
+    	return bookRepository.findById(isbn).orElseThrow( () -> new BookNotFoundException(isbn));
+    }
+
+    // Retrieve books by genre
     public List<Book> getBooksByGenre(String genre) {
         return bookRepository.findByGenre(genre);
+    }
+    public BookRepository getBookRepository() {
+    	return bookRepository;
     }
 
     // AppyDiscount Method
