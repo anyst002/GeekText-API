@@ -100,6 +100,25 @@ public class Book {
 	public double getAvg_rating() {
 		return avg_rating;
 	}
+	@Override
+	public boolean equals(Object o) {
+	       // If the object is compared with itself then return true  
+        if (o == this) {
+            return true;
+        }
+ 
+        /* Check if o is an instance of Complex or not
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof Book)) {
+            return false;
+        }
+        Book b = (Book) o;
+        if(b.isbn != this.isbn) {
+        	return false;
+        }
+        return true; // isbn is a unique key.
+        
+	}
 	
 	@JsonIgnore
 	public Set<Lists> getLists() {
