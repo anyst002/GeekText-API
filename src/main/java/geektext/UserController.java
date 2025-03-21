@@ -1,7 +1,6 @@
 package geektext;
 
 import java.util.Date;
-//TODO import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.EntityModel;
@@ -20,39 +19,6 @@ public class UserController {
 	private @Autowired UserRepository userRepository;
 	private @Autowired CreditCardRepository ccRepository;
 	private @Autowired UserModelAssembler userAssembler;
-
-	//=====================
-	//== Testing methods ==
-	//==== TODO remove ====
-	//=====================
-	
-//	//Returns all users as JSON
-//	@ResponseBody
-//	@GetMapping(path="/user")
-//	public Iterable<User> getAllUsers() {
-//		return userRepository.findAll();
-//	}
-//	
-//	//Returns all credit cards as JSON
-//	@ResponseBody
-//	@GetMapping(path="/credit")
-//	public Iterable<CreditCard> getAllCreditCards() {
-//		return ccRepository.findAll();
-//	}
-//	
-//	//Gets a user via id; returns the user info as JSON
-//	@ResponseBody
-//	@GetMapping(path="/user/id/{id}")
-//	public Optional<User> getUserById(@PathVariable Integer id) {
-//		return userRepository.findById(id);
-//	}
-//	
-//	//Gets a credit card via id; returns the card info as JSON
-//	@ResponseBody
-//	@GetMapping(path="/credit/id/{id}")
-//	public Optional<CreditCard> getCreditCard(@PathVariable Integer id) {
-//		return ccRepository.findById(id);
-//	}
 	
 	//======================
 	//==== Main methods ====
