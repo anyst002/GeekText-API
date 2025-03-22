@@ -32,12 +32,12 @@ public class MainController {
 	public Optional<User> getUser(@PathVariable Integer id) {
 		return userRepository.findById(id);
 	}
+	
 }
-
 
 
 // Jeffry Testing querys
 // GET http://localhost:8080/book/genre?genre=Sci-Fi
 // PATCH http://localhost:8080/book/discount?discountPercent=10&publisher_id=2
 // GET http://localhost:8080/book/topSellers
-//
+// GET http://localhost:8080/book/rating?rating=3.8

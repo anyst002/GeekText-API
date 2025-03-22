@@ -25,7 +25,7 @@ public class Book {
 	private String genre;
 	private int year_published;
 	private int copies_sold;
-	private double avg_rating;
+	private double rating;
 
 	// Getters and Setters
 	// Isbn getter
@@ -89,8 +89,8 @@ public class Book {
 	}
 
 	// Avg_rating getter
-	public double getAvg_rating() {
-		return avg_rating;
+	public double getRating() {
+		return rating;
 	}
 
 }

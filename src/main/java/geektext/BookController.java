@@ -61,10 +61,35 @@ public class BookController {
         return ResponseEntity.ok(books); // Return 200 OK & the list of books
     }
  
+ // GetMapping for finding list of books by rating
+ @GetMapping("/rating")
+ 
+ //Method to return entity list of books given a requestParam rating
+    public ResponseEntity<List<Book>> getBooksByRating(@RequestParam("rating") double rating) {
+        // Log the rating that is being passed in the request, for testing, can remove for final
+        System.out.println("Received rating parameter: " + rating);
+
+        List<Book> books = bookServicer.getBooksByRating(rating);
+        
+        // To check if no books are >= rating
+        if (books.isEmpty()) {
+            // If no books are found, log result and return 204 No Content
+            System.out.println("No books found for rating: " + rating);  // Can remove later, used for testing
+            return ResponseEntity.noContent().build();
+        }
+
+        // If books are found, log result and return the list
+        System.out.println("Books found: " + books); // Can remove later, used for testing
+        return ResponseEntity.ok(books); // Return 200 OK & the list of books
+    }
+ 
 //GetMapping to retrieve the top 10 best-selling books
  @GetMapping("/topSellers")
  public List<Book> getTopSellers() {
      return bookServicer.getTop10BestSellers();
  }
 
-}
+
+
+
+ }
