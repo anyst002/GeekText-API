@@ -15,8 +15,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 	
 	// Find by Genre for genre sorting
 	List<Book> findByGenre(String genre);
-
-	// Find top 10 books based on copies sold in decending order
+	
+	// Find by rating to return books equal to and greater than given rating in descending order
+	 @Query("SELECT b FROM Book b WHERE b.rating >= :rating ORDER BY b.rating DESC")   
+	 List<Book> findByRatingGreaterThanEqual(double rating);
+	
+	
+	
+	// Find top 10 books based on copies sold in descending order
 	//  query to get the top 10 books sorted by copies_sold in descending order limit 10
     @Query("SELECT b FROM Book b ORDER BY b.copies_sold DESC LIMIT 10")
     List<Book> findTop10Books();
