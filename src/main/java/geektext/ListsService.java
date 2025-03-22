@@ -113,4 +113,14 @@ public class ListsService {
 		repository.save(L);
 	}
 	
+	void checkBookInCart(Wishlist w, Long isbn) {
+		bRepository.findById(isbn).orElseThrow(() -> new BookNotFoundException(isbn));
+		Integer userId = w.getUserId();
+		Set<Long> cart = wRepository.findBookIdInCart(userId);
+		// edge case cart already has entry with format [userid, bookid].
+		// so throw an error.
+		if(cart.contains(isbn)) {
+			throw new CartEntryExistsWLException(isbn, w.getUser(), w.getId());
+		}
+	}
 }
