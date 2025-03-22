@@ -1,9 +1,10 @@
 package geektext;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.hibernate.Transaction;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
@@ -11,7 +12,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @RestController // if its not restcontroller stuff doesnt work
@@ -111,13 +112,33 @@ public class WishlistController {
 		initializeBooks(w);
 		return listsService.getBookModelsByWishlistId(wishlistId);
 	}
+	void insertIntoCart(Integer uId, Long bId) {
+	    SessionImplementor sessionImp = (SessionImplementor) entityManager.getDelegate();
+	    // needed to do this because transaction annotation was not working so i could not insert any entries into tables.
+	    Transaction transaction = sessionImp.getTransaction();
+	        try {
+	            transaction.begin();
+	    		entityManager.createNativeQuery("INSERT INTO cart (user_id, book_id) VALUES (?,?)")
+				.setParameter(1, uId)
+				.setParameter(2, bId)
+				.executeUpdate();
+	            //do my stuffs with em
+	            transaction.commit();
+	        } catch (Exception e) {
+	            transaction.rollback();
+	        }
+	}
 	@DeleteMapping("/{wishlistId}")
 	@ResponseBody
 	ResponseEntity<?> removeBookFromWishlist(@PathVariable Integer wishlistId, @RequestParam("bookId") Long bookId) {
+		// wishlist id invalid case.
 		Wishlist w = wishlistRepository.findById(wishlistId).orElseThrow(() -> new WishlistNotFoundException(wishlistId));
 		initializeBooks(w);
-		listsService.checkBookInWishlist(w, bookId); // also checks if the book exists in general.
+		// function below will throw an error if book id is invalid or not in the wishlist w.
+		listsService.checkBookInWishlist(w, bookId);
+		listsService.checkBookInCart(w, bookId); // checks if book is already in shopping cart and throw an exception if so.
 		listsService.deleteEntry(w, bookId);
+		insertIntoCart(w.getUserId(), bookId);
 		return ResponseEntity.noContent().build();
 	}
 	EntityModel<Wishlist> one(Integer id) {
