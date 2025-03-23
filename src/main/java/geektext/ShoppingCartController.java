@@ -13,7 +13,6 @@ public class ShoppingCartController {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
-    // Add Item to Cart
     @PostMapping("/add")
     public ResponseEntity<String> addItemToCart(@RequestParam Integer userId, @RequestParam Long isbn, @RequestParam int quantity) {
         try {
@@ -25,39 +24,26 @@ public class ShoppingCartController {
         }
     }
 
-    // View Cart
     @GetMapping("/view")
     public ResponseEntity<List<CartItem>> viewCart(@RequestParam Integer userId) {
-        try {
-            List<CartItem> cartItems = shoppingCartService.getCartItems(userId);
-            return ResponseEntity.ok(cartItems);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
+        List<CartItem> items = shoppingCartService.viewCart(userId);
+        return ResponseEntity.ok(items);
     }
 
-    // Remove Item from Cart
     @DeleteMapping("/remove")
-    public ResponseEntity<String> removeItemFromCart(@RequestParam Integer userId, @RequestParam Long isbn) {
+    public ResponseEntity<String> removeItem(@RequestParam Integer userId, @RequestParam Long isbn) {
         try {
             shoppingCartService.removeItemFromCart(userId, isbn);
             return ResponseEntity.ok("Item removed from cart");
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }
 
-    // Get Subtotal
     @GetMapping("/subtotal")
-    public ResponseEntity<Double> getSubtotal(@RequestParam Integer userId) {
-        try {
-            double subtotal = shoppingCartService.calculateSubtotal(userId);
-            return ResponseEntity.ok(subtotal);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body(null);
-        }
+    public ResponseEntity<String> getSubtotal(@RequestParam Integer userId) {
+        double subtotal = shoppingCartService.calculateSubtotal(userId);
+        String formatted = String.format("$%.2f", subtotal);
+        return ResponseEntity.ok(formatted);
     }
 }
