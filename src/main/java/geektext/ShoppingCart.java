@@ -1,23 +1,21 @@
 package geektext;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-
 import java.util.List;
 
 @Entity
+@Table(name = "shopping_cart")
 public class ShoppingCart {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference // This allows the items to be serialized without creating a loop
-    private List<CartItem> items;
-
-    @Column(name = "user_id")
+    @Column(name = "user_id", nullable = false)
     private Integer userId;
+
+    @OneToMany(mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> items;
 
     public ShoppingCart() {}
 
@@ -25,24 +23,10 @@ public class ShoppingCart {
         this.userId = userId;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public List<CartItem> getItems() {
-        return items;
-    }
-
-    public void setItems(List<CartItem> items) {
-        this.items = items;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+    public Long getId() { return id; }
+    public Integer getUserId() { return userId; }
+    public void setUserId(Integer userId) { this.userId = userId; }
+    public List<CartItem> getItems() { return items; }
+    public void setItems(List<CartItem> items) { this.items = items; }
 }
 
