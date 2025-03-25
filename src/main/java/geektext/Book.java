@@ -1,6 +1,6 @@
 package geektext;
 
-// import libraries
+// import libraries from jakarta
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
