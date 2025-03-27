@@ -5,13 +5,17 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
+
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
 import jakarta.persistence.OneToMany;
+
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
@@ -78,6 +82,7 @@ public class User {
 	public void setHomeAddress(String homeAddress) {
 		this.homeAddress = homeAddress;
 	}
+
 	
 	// need this @OneToMany annotation because of foreign key & entity relationship stuff.
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -113,4 +118,5 @@ public class User {
         return true;
         
 	}
+
 }
