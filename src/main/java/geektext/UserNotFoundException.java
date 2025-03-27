@@ -1,8 +1,10 @@
 package geektext;
 
-class UserNotFoundException extends RuntimeException {
-
-  public UserNotFoundException(Integer id) {
-    super("Could not find user " + id);
-  }
+public class UserNotFoundException extends RuntimeException {
+	UserNotFoundException(String username) {
+		super("Could not find user " + username);
+	}
+	UserNotFoundException(Integer id) {
+		super("Could not find user with id " + id);
+	}
 }

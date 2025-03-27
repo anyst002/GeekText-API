@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-// import libraries
+// import libraries from jakarta
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,10 +31,8 @@ public class Book {
 	private String genre;
 	private int year_published;
 	private int copies_sold;
-	private double avg_rating;
-	private 
-	@OneToMany(mappedBy = "id.book", fetch = FetchType.LAZY)
-		Set<Lists> L;
+	private double rating;
+
 	// Getters and Setters
 	// Isbn getter
 	public long getIsbn() {
@@ -97,32 +95,16 @@ public class Book {
 	}
 
 	// Avg_rating getter
-	public double getAvg_rating() {
-		return avg_rating;
+	public double getRating() {
+		return rating;
 	}
-	@Override
-	public boolean equals(Object o) {
-	       // If the object is compared with itself then return true  
-        if (o == this) {
-            return true;
-        }
- 
-        /* Check if o is an instance of Complex or not
-          "null instanceof [type]" also returns false */
-        if (!(o instanceof Book)) {
-            return false;
-        }
-        Book b = (Book) o;
-        if(b.isbn != this.isbn) {
-        	return false;
-        }
-        return true; // isbn is a unique key.
-        
-	}
-	
+
+	private 
+	@OneToMany(mappedBy = "id.book", fetch = FetchType.LAZY)
+		Set<Lists> L;
 	@JsonIgnore
 	public Set<Lists> getLists() {
 		return L;
 	}
-
+	
 }

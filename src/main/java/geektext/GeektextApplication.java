@@ -9,5 +9,5 @@ public class GeektextApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GeektextApplication.class, args);
 	}
-
+	
 }

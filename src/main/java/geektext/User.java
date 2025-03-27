@@ -55,10 +55,6 @@ public class User {
 		return homeAddress;
 	}
 	
-	public String toString() {
-		return "User{id=" + id + ", username=" + username + ", password=" + userPassword + 
-				", fullName= " + fullName + ", emailAddress= " + emailAddress + ", homeAddress=" + homeAddress + "}";
-	}
 	//======================
 	//=== Setter methods ===
 	//======================
@@ -82,14 +78,16 @@ public class User {
 	public void setHomeAddress(String homeAddress) {
 		this.homeAddress = homeAddress;
 	}
+	
 	// need this @OneToMany annotation because of foreign key & entity relationship stuff.
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-	@JsonIgnore // omits wishlists from json output.
 	private Set<Wishlist> wishlists = new HashSet<>();     
+	@JsonIgnore // omits wishlists from json output.
 	public Set<Wishlist> getWishlists() {
 		return wishlists;
 	}
 	
+	// more foreign key stuff
 	private
 	@OneToMany(mappedBy = "id.user", fetch = FetchType.LAZY)
 		Set<Lists> L;
@@ -97,6 +95,7 @@ public class User {
 	public Set<Lists> getLists() {
 		return L;
 	}
+	// used in wishlist service for checking if something is in a set
 	@Override
 	public boolean equals(Object o) {
         if (o == this) {
