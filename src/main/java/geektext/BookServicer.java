@@ -46,6 +46,16 @@ public class BookServicer {
 	public List<Book> getTop10BestSellers() {
 		return bookRepository.findTop10Books();
 	}
+	
+    // added this function to work with my listsservice file
+    public Book getBookByIsbn(Long isbn) {
+    	return bookRepository.findById(isbn).orElseThrow( () -> new BookNotFoundException(isbn));
+    }
+    
+    // getter to work with list service
+    public BookRepository getBookRepository() {
+    	return bookRepository;
+    }
 
 }
 

@@ -3,6 +3,7 @@ package geektext;
 // import libraries
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -89,7 +90,10 @@ public class BookController {
      return bookServicer.getTop10BestSellers();
  }
 
-
-
+ 	private BookModelAssembler assembler;
+ 	// getter to work with list service
+	public EntityModel<Book> getBookModelByIsbn(Long isbn) {
+		return assembler.toModel(bookServicer.getBookRepository().findById(isbn).orElseThrow( () -> new BookNotFoundException(isbn)));
+ 	}
 
  }
