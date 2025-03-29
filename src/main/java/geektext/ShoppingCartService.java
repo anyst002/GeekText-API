@@ -49,8 +49,16 @@ public class ShoppingCartService {
 
         CartItem cartItem = cartItemRepository.findItem(shoppingCart.getId(), bookIsbn);
         if (cartItem != null) {
-            cartItemRepository.deleteById(cartItem.getId());
-            System.out.println("Cart item deleted.");
+            if (cartItem.getQuantity() > 1) {
+                // Decrease quantity by 1
+                cartItem.setQuantity(cartItem.getQuantity() - 1);
+                cartItemRepository.save(cartItem);
+                System.out.println("Decreased quantity by 1.");
+            } else {
+                // Quantity is 1 — remove entire item
+                cartItemRepository.deleteById(cartItem.getId());
+                System.out.println("Cart item deleted.");
+            }
         } else {
             throw new RuntimeException("Cart item not found for book ISBN: " + bookIsbn);
         }
