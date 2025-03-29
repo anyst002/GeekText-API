@@ -21,7 +21,7 @@ public class Comment {
     private String commentText;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     // Constructors
     public Comment() {}
@@ -32,18 +32,21 @@ public class Comment {
         this.commentText = commentText;
     }
 
+    // Auto-set the timestamp before persisting to DB
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     // Getters and Setters
     public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
     public Long getBookId() { return bookId; }
-    public void setBookId(Long bookId) { this.bookId = bookId; }
-
     public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
-
     public String getCommentText() { return commentText; }
-    public void setCommentText(String commentText) { this.commentText = commentText; }
-
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+    // ✅ Add this setter to allow modification
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
+    }
 }

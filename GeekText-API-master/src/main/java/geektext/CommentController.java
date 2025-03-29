@@ -1,11 +1,11 @@
 package geektext;
 
-import geektext.Comment;
-import geektext.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/comments")
@@ -15,12 +15,18 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping
-    public Comment addComment(@RequestBody Comment comment) {
-        return commentService.addComment(comment);
+    public ResponseEntity<?> addComment(@RequestBody Comment comment) {
+        try {
+            Comment savedComment = commentService.addComment(comment);
+            return ResponseEntity.status(201).body(savedComment);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Failed to add comment"));
+        }
     }
 
     @GetMapping("/{bookId}")
-    public List<Comment> getCommentsByBook(@PathVariable Long bookId) {
-        return commentService.getCommentsByBook(bookId);
+    public ResponseEntity<List<Comment>> getCommentsByBook(@PathVariable Long bookId) {
+        List<Comment> comments = commentService.getCommentsByBook(bookId);
+        return ResponseEntity.ok(comments);
     }
 }

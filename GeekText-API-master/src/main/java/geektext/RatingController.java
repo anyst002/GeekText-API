@@ -3,9 +3,10 @@ package geektext;
 import geektext.Rating;
 import geektext.RatingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ratings")
@@ -15,12 +16,18 @@ public class RatingController {
     private RatingService ratingService;
 
     @PostMapping
-    public Rating addRating(@RequestBody Rating rating) {
-        return ratingService.addRating(rating);
+    public ResponseEntity<?> addRating(@RequestBody Rating rating) {
+        try {
+            Rating savedRating = ratingService.addRating(rating);
+            return ResponseEntity.ok(savedRating);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
     @GetMapping("/{bookId}/average")
-    public double getAverageRating(@PathVariable Long bookId) {
-        return ratingService.getAverageRating(bookId);
+    public ResponseEntity<?> getAverageRating(@PathVariable Long bookId) {
+        double average = ratingService.getAverageRating(bookId);
+        return ResponseEntity.ok(Map.of("bookId", bookId, "averageRating", average));
     }
 }

@@ -3,6 +3,7 @@ package geektext;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+ 
 @Entity
 @Table(name = "ratings")
 public class Rating {
@@ -17,6 +18,8 @@ public class Rating {
     @Column(nullable = false)
     private Long userId;
 
+    //@Min(1)
+    //@Max(5)
     @Column(nullable = false)
     private int rating;
 
@@ -43,7 +46,12 @@ public class Rating {
     public void setUserId(Long userId) { this.userId = userId; }
 
     public int getRating() { return rating; }
-    public void setRating(int rating) { this.rating = rating; }
+    public void setRating(int rating) { 
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("Rating must be between 1 and 5.");
+        }
+        this.rating = rating; 
+    }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

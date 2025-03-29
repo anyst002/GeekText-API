@@ -1,10 +1,7 @@
 package geektext;
 
-import geektext.Comment;
-import geektext.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -14,6 +11,10 @@ public class CommentService {
     private CommentRepository commentRepository;
 
     public Comment addComment(Comment comment) {
+        if (comment.getCommentText() == null || comment.getCommentText().trim().isEmpty()) {
+            throw new IllegalArgumentException("Comment cannot be empty.");
+        }
+        comment.setCommentText(comment.getCommentText().trim());
         return commentRepository.save(comment);
     }
 
@@ -21,3 +22,5 @@ public class CommentService {
         return commentRepository.findByBookId(bookId);
     }
 }
+
+ 
