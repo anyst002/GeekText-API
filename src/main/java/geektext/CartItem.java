@@ -1,6 +1,7 @@
 package geektext;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "cart_item")
@@ -18,6 +19,7 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name = "shopping_cart_id", referencedColumnName = "id", nullable = false)
+    @JsonIgnore 
     private ShoppingCart shoppingCart;
 
     public CartItem() {}
@@ -36,4 +38,3 @@ public class CartItem {
     public ShoppingCart getShoppingCart() { return shoppingCart; }
     public void setShoppingCart(ShoppingCart shoppingCart) { this.shoppingCart = shoppingCart; }
 }
-
