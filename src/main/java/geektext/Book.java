@@ -1,15 +1,10 @@
 package geektext;
 
-import java.util.Set;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-// import libraries from jakarta
+// import libraries
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -98,12 +93,4 @@ public class Book {
 		return rating;
 	}
 
-	private 
-	@OneToMany(mappedBy = "id.book", fetch = FetchType.LAZY)
-		Set<Lists> L;
-	@JsonIgnore
-	public Set<Lists> getLists() {
-		return L;
-	}
-	
 }
