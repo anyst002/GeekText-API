@@ -63,11 +63,11 @@ CREATE TABLE `book` (
   `genre` varchar(30) DEFAULT NULL,
   `year_published` date NOT NULL,
   `copies_sold` int unsigned NOT NULL DEFAULT '0',
-  `avg_rating` decimal(3,2) DEFAULT NULL,
+  `rating` decimal(3,2) DEFAULT NULL,
   PRIMARY KEY (`isbn`),
   KEY `author_id` (`author_id`),
   KEY `publisher_id` (`publisher_id`),
-  KEY `avg_rating` (`avg_rating`),
+  KEY `rating` (`rating`),
   CONSTRAINT `book_ibfk_1` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`),
   CONSTRAINT `book_ibfk_2` FOREIGN KEY (`publisher_id`) REFERENCES `publisher` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
