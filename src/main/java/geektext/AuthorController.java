@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/authors")
 public class AuthorController {
+
     @Autowired
-    private AuthorServicer authorService;
+    private AuthorServicer authorServicer;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createAuthor(@RequestBody Author author) {
-        authorService.createAuthor(author);
+        authorServicer.createAuthor(author);
     }
 }
