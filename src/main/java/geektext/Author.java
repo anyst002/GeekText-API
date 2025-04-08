@@ -1,73 +1,79 @@
 package geektext;
 
+import jakarta.persistence.*;
 import java.util.List;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
-@Entity 
+@Entity
 @Table(name = "author")
 
 public class Author {
-	
-	@Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	
-	private String first_name;
-	private String last_name;
-	private int author_id;
-	private String biography;
-	private int publisher_id;
-	
-	
-	public String getFirstName() {
-		return first_name;
-	}
-	
+  
+    private Integer id;
 
-	public String getLastName() {
-		return last_name;
-	}
-	
-	public int getAuthor_id() {
-		return author_id;
-	}
-	
-	
-	public String getBiography(){
-		return biography;
-	}
-	
-	public int publisher_id(){
-		return publisher_id;
-	}
-	
-	public void setFirstName(String newFirstName) {
-		first_name = newFirstName;
-	}
-	
-	public void setLastName(String newLastName) {
-		first_name = newLastName;
-	}
-	
-	public void setAuthorId(int newAuthor_id) {
-		author_id = newAuthor_id;
-	}
-	
-	public void setBiography(String newBiography) {
-		biography = newBiography;
-	}
-	
-	public void setPublisher_id(int newPublisher_id) {
-		publisher_id = newPublisher_id;
-	}
-	
-	
-	@OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-	private List<Book> books;
+    private String first_name;
+    private String last_name;
+    
+    @Column(columnDefinition = "TEXT")
+    private String biography;
 
-}//end class
+    private int publisher_id;
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private List<Book> books;
+
+    // Getters and Setters
+    public Integer getAuthorId() {
+        return id;
+        
+    }
+
+    public void setAuthorId(int id) {
+    	this.id = id;
+    }
+
+    public String getFirstName() {
+        return first_name;
+    }
+
+    public void setFirstName(String first_name) {
+        this.first_name = first_name;
+    }
+
+    public String getLastName() {
+        return last_name;
+    }
+
+    public void setLastName(String last_name) {
+        this.last_name = last_name;
+    }
+
+    public String getBiography() {
+        return biography;
+    }
+
+    public void setBiography(String biography) {
+        this.biography = biography;
+    }
+
+    public int getPublisherId() {
+        return publisher_id;
+    }
+
+    public void setPublisherId(int publisher_id) {
+        this.publisher_id = publisher_id;
+        
+    }
+    
+    public List<Book> getBooks(){
+    	return books;
+    }
+    
+    public void setBooks(List<Book> books) {
+    	this.books = books;
+    }
+
+	
+}
