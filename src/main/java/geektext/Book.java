@@ -105,27 +105,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+// Book Entity
 @Entity
 @Table(name = "book")
 public class Book {
 	//book class variables
+	
 	//primary key
 	@Id
 	@GeneratedValue
 	private long isbn;
 	private int author_id;
-	@Column(name = "publisher_id") //might be able to remove later
+	@Column(name = "publisher_id") 
 	private int publisher_id;
 	private String title;
 	private String book_description;
 	private double price;
-	@Column(name = "genre") //might be able to remove later
+	@Column(name = "genre") 
 	private String genre;
 	private int year_published;
 	private int copies_sold;
 	private double rating;
 
 	// Getters and Setters
+	
 	// Isbn getter
 	public long getIsbn() {
 		return isbn;
