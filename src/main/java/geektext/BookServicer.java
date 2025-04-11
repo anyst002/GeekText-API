@@ -1,19 +1,18 @@
-
 package geektext;
+
 
 //import libraries
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-// Indicates class is a service
 @Service
 
-//Book servicer class
 public class BookServicer {
 
     @Autowired
-    private BookRepository bookRepository; // Create bookRepository
+    private BookRepository bookRepository; 
+
     
  // Retrieve books by genre
     public List<Book> getBooksByGenre(String genre) {
@@ -44,6 +43,9 @@ public class BookServicer {
     }
     
  // Retrieve books by genre
+    public List<Book> getBooksByAuthorid(int author_id) {
+        return bookRepository.findByAuthorid(author_id);
+=======
     public List<Book> getBooksByAuthor_id(int author_id) {
         return bookRepository.findByAuthor_id(author_id);
     }
@@ -65,14 +67,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
-// Indicate class as a service
+
 @Service
 
-//Book servicer class
+
 public class BookServicer {
 
 	@Autowired
-	private BookRepository bookRepository; // Create bookRepository
+	private BookRepository bookRepository; 
 
 	// Retrieve books by genre
 	public List<Book> getBooksByGenre(String genre) {
@@ -110,11 +112,15 @@ public class BookServicer {
     // added this function to work with my listsservice file
     public Book getBookByIsbn(Long isbn) {
     	return bookRepository.findById(isbn).orElseThrow( () -> new BookNotFoundException(isbn));
+
     }
     
-    // getter to work with list service
-    public BookRepository getBookRepository() {
-    	return bookRepository;
-    }
+   // create a new book
+   public Book createBook(Book book){
+	   return bookRepository.save(book);
+	   
+   }
+   
+
 
 }
