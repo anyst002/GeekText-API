@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 
-// Indicates class is a service
+// Indicate class as a service
 @Service
 
 //Book servicer class
@@ -31,6 +31,7 @@ public class BookServicer {
 
 	// AppyDiscount Method
 	public void applyDiscount(double discountPercent, int publisher_id) {
+		
 		//method to find books by publisher_id
 		List<Book> books = bookRepository.findByPublisher_id(publisher_id);
 
@@ -48,10 +49,3 @@ public class BookServicer {
 	}
 
 }
-
-
-
-
-
-
-
