@@ -3,6 +3,7 @@ package geektext;
 // import libraries
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path="/book") 
-	
-
 public class BookController {
 
     @Autowired
@@ -25,7 +24,7 @@ public class BookController {
     	return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
     }
 
-//Patch mapping for discount based on publisher    
+    //Patch mapping for discount based on publisher    
     @PatchMapping("/discount")
     
     //Method to apply discount given requestParams
@@ -51,9 +50,9 @@ public class BookController {
     }
    
     // GetMapping for finding list of books by genre
- @GetMapping("/genre")
+    @GetMapping("/genre")
  
- //Method to return entity list of books given a requestParam genre
+ 	//Method to return entity list of books given a requestParam genre
     public ResponseEntity<List<Book>> getBooksByGenre(@RequestParam("genre") String genre) {
         
 	 // Log the genre that is being passed in the request
@@ -73,57 +72,43 @@ public class BookController {
         return ResponseEntity.ok(books); // Return 200 OK & the list of books
     }
  
-//GetMapping to retrieve the top 10 best-selling books
- @GetMapping("/topSellers")
- public List<Book> getTopSellers() {
-     return bookServicer.getTop10BestSellers();
- }
+ 	//GetMapping to retrieve the top 10 best-selling books
+    @GetMapping("/topSellers")
+ 	public List<Book> getTopSellers() {
+    	return bookServicer.getTop10BestSellers();
+ 	}
  
- @GetMapping("/isbn")
+ 	@GetMapping("/isbn")
 
-//Method to return entity list of books given a requestParam genre
-  public ResponseEntity<List<Book>> getBooksByIsbn(@RequestParam("isbn") long isbn) {
-      System.out.println("Received isbn parameter: " + isbn);
+ 	//Method to return entity list of books given a requestParam isbn
+ 	public ResponseEntity<Book> getBooksByIsbn(@RequestParam("isbn") long isbn) {
+	 	System.out.println("Received isbn parameter: " + isbn);
 
-      List<Book> books = bookServicer.getBooksByIsbn(isbn);
-      
-      // To check if no books are in isbn
-      if (books.isEmpty()) {
-          // If no books are found, log result and return 204 No Content
-          System.out.println("No books found for isbn: " + isbn);  // Can remove later, used for testing
-          return ResponseEntity.noContent().build();
-      }
+	 	Book book = bookServicer.getBookByIsbn(isbn);
 
-      // If books are found, log result and return the list
-      System.out.println("Books found: " + books); // Can remove later, used for testing
-      return ResponseEntity.ok(books); // Return 200 OK & the list of books
-  } 
- @GetMapping("/author")
- public ResponseEntity<List<Book>> getBooksByAuthor_id(@RequestParam("author_id") int author_id) {
-     // Log the genre that is being passed in the request, for testing, can remove for final
-     System.out.println("Received author parameter: " + author_id );
+	 	return ResponseEntity.ok(book); // Return 200 OK & the list of books
+ 	}
+ 	
+ 	@GetMapping("/author")
+ 	public ResponseEntity<List<Book>> getBooksByAuthor_id(@RequestParam("author_id") int author_id) {
+ 		// Log the genre that is being passed in the request, for testing, can remove for final
+ 		System.out.println("Received author parameter: " + author_id );
 
-     List<Book> books = bookServicer.getBooksByAuthorid(author_id);
-     
-     // To check if no books are from author
-     if (books.isEmpty()) {
-         // If no books are found, log result and return 204 No Content
-         System.out.println("No books found for author: " + author_id);  // Can remove later, used for testing
-         return ResponseEntity.noContent().build();
-     }
+ 		List<Book> books = bookServicer.getBooksByAuthor_id(author_id);
 
-     // If books are found, log result and return the list
-     System.out.println("Books found: " + books); // Can remove later, used for testing
-     return ResponseEntity.ok(books); // Return 200 OK & the list of books
- } 
+ 		// To check if no books are from author
+ 		if (books.isEmpty()) {
+ 			// If no books are found, log result and return 204 No Content
+ 			System.out.println("No books found for author: " + author_id);  // Can remove later, used for testing
+ 			return ResponseEntity.noContent().build();
+ 		}
+
+ 		// If books are found, log result and return the list
+ 		System.out.println("Books found: " + books); // Can remove later, used for testing
+ 		return ResponseEntity.ok(books); // Return 200 OK & the list of books
+ 	} 
  
-
- 
- 
-
- }
-=======
- //Method to return entity list of books given a requestParam rating
+ 	//Method to return entity list of books given a requestParam rating
     public ResponseEntity<List<Book>> getBooksByRating(@RequestParam("rating") double rating) {
 	 
         // Log the rating that is being passed in the request, for testing, can remove for final
@@ -143,10 +128,11 @@ public class BookController {
         System.out.println("Books found: " + books); 
         return ResponseEntity.ok(books); // Return 200 OK & the list of books
     }
+    
+    private @Autowired BookModelAssembler assembler;
  
-//GetMapping to retrieve the top 10 best-selling books
- @GetMapping("/topSellers")
- public List<Book> getTopSellers() {
-     return bookServicer.getTop10BestSellers();
- }
+ 	// getter to work with list service
+	public EntityModel<Book> getBookModelByIsbn(Long isbn) {
+		return assembler.toModel(bookServicer.getBookRepository().findById(isbn).orElseThrow( () -> new BookNotFoundException(isbn)));
+ 	}
 }

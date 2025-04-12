@@ -1,105 +1,13 @@
 package geektext;
 
 // import libraries
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Version;
-
-@Entity
-@Table(name = "book")
-public class Book {
-	//book class variables
-	//primary key
-	@Id
-	private long isbn;
-	@Column(name = "publisher_id") 
-	private int publisher_id;
-	private String title;
-	private String book_description;
-	private double price;
-	@Column(name = "genre") 
-	private String genre;
-	private int year_published;
-	private int copies_sold;
-	private double rating;
-	
-	 @ManyToOne
-	 @JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
-	 private Author author;
-
-	// Getters and Setters
-	public long getIsbn() {
-		return isbn;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-	
-	public void setTitle(String newTitle) {
-		title = newTitle;
-	}
-	
-
-	public void setPrice(double newPrice) {
-		price = newPrice;
-	}
-
-	public double getPrice() {
-		return price;
-	}
-
-	public void setPublisher_id(int publisher_id) {
-		this.publisher_id = publisher_id;
-	}
-
-	public int getPublisher_id() { 
-		return publisher_id;
-	}
-
-	public String getBook_description() {
-		return book_description;
-	}
-
-	public void setGenre(String genre) {
-		this.genre = genre;
-	}
-
-	public String getGenre() {
-		return genre;
-	}
-
-	public int getYear_published() {
-		return year_published;
-	}
-
-	
-	public int getCopies_sold() {
-		return copies_sold;
-	}
-
-
-=======
-	// Avg_rating getter
-	public double getAvg_rating() {
-		return avg_rating;
-	}
-
-}
-=======
-package geektext;
-
-// import libraries
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 // Book Entity
@@ -112,6 +20,7 @@ public class Book {
 	@Id
 	@GeneratedValue
 	private long isbn;
+	@Column(insertable=false, updatable=false)
 	private int author_id;
 	@Column(name = "publisher_id") 
 	private int publisher_id;
@@ -122,7 +31,13 @@ public class Book {
 	private String genre;
 	private int year_published;
 	private int copies_sold;
+	@Column(name = "avg_rating") 
 	private double rating;
+	
+	@ManyToOne
+	@JoinColumn(name = "author_id", referencedColumnName = "id", nullable = false)
+	@JsonIgnore
+	private Author author;
 
 	// Getters and Setters
 	
@@ -148,7 +63,7 @@ public class Book {
 
 	//Author_id getter
 	public int getAuthor_id() {
-		return author_id;
+		return author.getAuthorId();
 	}
 
 	//Publisher_id setter
@@ -179,7 +94,24 @@ public class Book {
         this.author = author;
     }
 
-
+    	public void setTitle(String newTitle) {
+		title = newTitle;
+	}
 	
 
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public String getGenre() {
+		return genre;
+	}
+
+	public int getYear_published() {
+		return year_published;
+	}
+
+	public int getCopies_sold() {
+		return copies_sold;
+	}
 }

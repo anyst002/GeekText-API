@@ -24,7 +24,7 @@ public class User {
 	private String fullName;
 	private String emailAddress;
 	private String homeAddress;
-
+	
 	//======================
 	//=== Getter methods ===
 	//======================

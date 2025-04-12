@@ -22,7 +22,7 @@ public class CreditCard {
 	@JsonFormat(pattern = "yyyy-MM")
 	private @Nonnull Date expDate;
 	private @Nonnull String cardholder;
-
+	
 	//======================
 	//=== Getter methods ===
 	//======================
